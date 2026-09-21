@@ -5,6 +5,7 @@ public class MaskTank : MonoBehaviour
     public Transform player;
     private Animator animator;
     private Rigidbody2D rb;
+    public GameManager gameManager;
 
     public float smoothTime;
     private float velocityX;
@@ -15,6 +16,9 @@ public class MaskTank : MonoBehaviour
 
     public float attackTimer;
     private float enemyTimer;
+
+    public float sleepyPublicTimer;
+    private float sleepyTimer;
 
     private bool isReturning;
     private bool isAttacking;
@@ -28,6 +32,7 @@ public class MaskTank : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         timer = maxTimer;
+        sleepyTimer = sleepyPublicTimer;
 
         isAttacking = false;
         enemyTimer = attackTimer;
@@ -66,12 +71,18 @@ public class MaskTank : MonoBehaviour
 
         if(isReturning)
         {
-            float oldPosition = Mathf.SmoothDamp(transform.position.y, oldY, ref velocityY, smoothTime);
-            transform.position = new Vector2(transform.position.x, oldPosition);
-        
-            if(transform.position.y == oldY)
+            sleepyTimer -= 1 * Time.deltaTime;
+
+            if(sleepyTimer <= 0)
             {
-                isReturning = false;
+                float oldPosition = Mathf.SmoothDamp(transform.position.y, oldY, ref velocityY, smoothTime);
+                transform.position = new Vector2(transform.position.x, oldPosition);
+        
+                if(transform.position.y == oldY)
+                {
+                    isReturning = false;
+                    sleepyTimer = sleepyPublicTimer;
+                }
             }
         }
 

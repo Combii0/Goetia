@@ -85,6 +85,15 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isGrounded", isGrounded);
     }
 
+    public void SetHitColor(bool damaged)
+    {
+        if(damaged)
+        {
+            sprite.color = Color.red;
+        }
+        else{sprite.color = Color.white;}
+    }
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
