@@ -5,7 +5,7 @@ public class MaskTank : MonoBehaviour
     public Transform player;
     private Animator animator;
     private Rigidbody2D rb;
-    public GameManager gameManager;
+    private BoxCollider2D boxCollider;
 
     public float smoothTime;
     private float velocityX;
@@ -30,6 +30,7 @@ public class MaskTank : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
 
         timer = maxTimer;
         sleepyTimer = sleepyPublicTimer;
@@ -39,7 +40,6 @@ public class MaskTank : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(player != null && !isAttacking)
@@ -71,6 +71,8 @@ public class MaskTank : MonoBehaviour
 
         if(isReturning)
         {
+            boxCollider.enabled = false;
+
             sleepyTimer -= 1 * Time.deltaTime;
 
             if(sleepyTimer <= 0)
@@ -82,6 +84,7 @@ public class MaskTank : MonoBehaviour
                 {
                     isReturning = false;
                     sleepyTimer = sleepyPublicTimer;
+                    boxCollider.enabled = true;
                 }
             }
         }

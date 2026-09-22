@@ -3,9 +3,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody2D rb;
-    private SpriteRenderer sprite;
-    private Animator animator;
+    public Rigidbody2D rb;
+    public SpriteRenderer sprite;
+    public Animator animator;
     private BoxCollider2D boxCollider;
 
     public float movementVelocity;
@@ -17,6 +17,11 @@ public class PlayerController : MonoBehaviour
     public float raycastLenght;
     public LayerMask groundLayer;
 
+    public float pointing;
+
+    public float coyoteTime;
+    private float coyoteTimeCounter;
+
     // ANIMATIONS //
 
     private bool isJumping;
@@ -25,9 +30,6 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        sprite = GetComponent<SpriteRenderer>();
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
         boxCollider = GetComponent<BoxCollider2D>();
     }
 
@@ -38,12 +40,14 @@ public class PlayerController : MonoBehaviour
             movementInput = -1;
             sprite.flipX = true;
             isRunning = true;
+            pointing = -1;
         }
         else if(Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed)
         {
             movementInput = 1;
             sprite.flipX = false;
             isRunning = true;
+            pointing = 1;
         }
         else{movementInput = 0; isRunning = false;}
 
@@ -54,9 +58,20 @@ public class PlayerController : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, raycastLenght, groundLayer);
         isGrounded = hit.collider != null;
 
-        if(Keyboard.current.spaceKey.wasPressedThisFrame && isGrounded == true)
+        if(isGrounded)
+        {
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
+
+        if(Keyboard.current.spaceKey.wasPressedThisFrame && coyoteTimeCounter > 0)
         {
             rb.AddForce(Vector2.up * jumpingForce, ForceMode2D.Impulse);
+
+            coyoteTimeCounter = 0;
 
             isJumping = true;
             isFalling = false;
