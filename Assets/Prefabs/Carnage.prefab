@@ -207,7 +207,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -7277210673917730585, guid: 73b7685f6c731499e9ec9d5ebc5b6671, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -290,3 +290,5 @@ MonoBehaviour:
   raycastLenght: 3.5
   maxTimer: 3
   freezedTime: 2
+  isFreezed: 0
+  freezeColor: {r: 1, g: 0, b: 0.6784314, a: 1}

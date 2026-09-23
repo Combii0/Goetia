@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     public float jumpingForce;
 
     private float movementInput;
-    private bool isGrounded = true;
+    private bool isGrounded;
 
     public float raycastLenght;
     public LayerMask groundLayer;
@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
 
     // ANIMATIONS //
 
-    private bool isJumping;
+    public bool isJumping;
     private bool isRunning;
     private bool isFalling;
 

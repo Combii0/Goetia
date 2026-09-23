@@ -25,7 +25,9 @@ public class Carnage : MonoBehaviour
     private float playerPosition;
 
     private bool canFreeze;
-    private bool isFreezed;
+    public bool isFreezed;
+
+    public Color freezeColor;
 
     void Awake()
     {
@@ -86,10 +88,13 @@ public class Carnage : MonoBehaviour
         playerController.rb.linearVelocity = Vector2.zero;
         playerController.enabled = false;
 
+        sprite.color = freezeColor;
+
         yield return new WaitForSeconds(freezedTime);
 
         playerController.enabled = true;
         isFreezed = false;
+        sprite.color = Color.white;
 
         yield return new WaitForSeconds(maxTimer);
 
