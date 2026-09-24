@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cc0069aa733c403e95f0fa421e26c1d, type: 3}
+  m_Name: Demon
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardID: demon
+  cardName: Demon
+  description: The darkness makes him more powerful; a ray will come out of him to
+    reach you wherever you are.
+  category: Projectile
+  frontSprite: {fileID: 21300000, guid: 39c66073e0c774d57a81eeb1c2bd4dc8, type: 3}

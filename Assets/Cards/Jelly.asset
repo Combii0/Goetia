@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cc0069aa733c403e95f0fa421e26c1d, type: 3}
+  m_Name: Jelly
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardID: jelly
+  cardName: Jelly
+  description: He will follow you; if he catches you, he will slow you down; you
+    will be able to bounce on him.
+  category: Debuffer
+  frontSprite: {fileID: 21300000, guid: 5c3eaad79c27149ee9db64d5fe9c175c, type: 3}
