@@ -531,6 +531,17 @@ public class MainMenuSaveSlotsUI : MonoBehaviour
 
     private void DeleteSlot(int slotIndex)
     {
+        EraseSaveSlot(slotIndex);
+    }
+
+    /// <summary>Erases every persisted value belonging to a run, including its active ritual.</summary>
+    public static void EraseSaveSlot(int slotIndex)
+    {
+        if(slotIndex < 0)
+        {
+            return;
+        }
+
         PlayerPrefs.DeleteKey(GetKey(slotIndex, "Exists"));
         PlayerPrefs.DeleteKey(GetKey(slotIndex, "Scene"));
         PlayerPrefs.DeleteKey(GetKey(slotIndex, "LastSave"));

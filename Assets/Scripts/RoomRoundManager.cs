@@ -13,7 +13,7 @@ using UnityEngine.UI;
 /// </summary>
 public sealed class RoomRoundManager : MonoBehaviour
 {
-    private const int CardHistoryFormatVersion = 2;
+    private const int CardHistoryFormatVersion = 3;
 
     [Header("Round")]
     public float roundDuration = 60f;
@@ -27,8 +27,8 @@ public sealed class RoomRoundManager : MonoBehaviour
 
     [Header("UI colours")]
     public Color timerColor = Color.white;
-    public Color panelColor = new Color(0.035f, 0.015f, 0.08f, 0.96f);
-    public Color accentColor = new Color(0.9f, 0.35f, 1f, 1f);
+    public Color panelColor = new Color(0.08f, 0.12f, 0.20f, 0.985f);
+    public Color accentColor = new Color(0.47f, 0.82f, 1f, 1f);
 
     private readonly List<GameObject> enemyTemplates = new List<GameObject>();
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
@@ -39,7 +39,6 @@ public sealed class RoomRoundManager : MonoBehaviour
     private RoomRewardCardHover rewardCardHover;
     private CanvasGroup winPanelGroup;
     private RectTransform winPanelRect;
-    private TMP_Text winSubtitleText;
     private CanvasGroup gameOverGroup;
     private TMP_Text roundInfoText;
     private TMP_Text roundTitleText;
@@ -53,6 +52,7 @@ public sealed class RoomRoundManager : MonoBehaviour
     private int currentSlot;
     private int roundNumber;
     private List<string> roundEnemyIds = new List<string>();
+    private bool pauseMenuReady;
 
     private void Awake()
     {
@@ -76,6 +76,9 @@ public sealed class RoomRoundManager : MonoBehaviour
 
     private void Start()
     {
+        // Create this after BuildUi has ensured the Input System EventSystem.
+        PauseMenuController.EnsureForRoom();
+        pauseMenuReady = true;
         StartCoroutine(SpawnEnemyHistory());
     }
 
@@ -90,6 +93,12 @@ public sealed class RoomRoundManager : MonoBehaviour
 
     private void Update()
     {
+        if(!pauseMenuReady)
+        {
+            PauseMenuController.EnsureForRoom();
+            pauseMenuReady = true;
+        }
+
         if(roundFinished)
         {
             return;
@@ -301,7 +310,6 @@ public sealed class RoomRoundManager : MonoBehaviour
         rewardCardHover.enabled = false;
         rewardCardGroup.gameObject.SetActive(false);
         roundTitleText.text = "Room " + roundNumber + " cleared!";
-        winSubtitleText.text = "THE NIGHT YIELDS — FOR NOW";
         roundInfoText.text = BuildRoundSummary();
         winPanelGroup.gameObject.SetActive(true);
         winPanelGroup.alpha = 0f;
@@ -370,29 +378,15 @@ public sealed class RoomRoundManager : MonoBehaviour
         panelOutline.effectDistance = new Vector2(5f, -5f);
         AddWinPanelDecorations(winObject.transform);
 
-        TMP_Text eyebrowText = CreateText(winObject.transform, "WinEyebrow", "THE ROOM FALLS SILENT", 20f, new Color(1f, 0.78f, 1f, 0.95f));
-        eyebrowText.alignment = TextAlignmentOptions.Center;
-        eyebrowText.characterSpacing = 4f;
-        eyebrowText.rectTransform.anchorMin = new Vector2(0.5f, 0.88f);
-        eyebrowText.rectTransform.anchorMax = new Vector2(0.5f, 0.88f);
-        eyebrowText.rectTransform.sizeDelta = new Vector2(760f, 44f);
-
         roundTitleText = CreateText(winObject.transform, "WinText", "Room 1 cleared!", 62f, accentColor);
         roundTitleText.alignment = TextAlignmentOptions.Center;
         roundTitleText.textWrappingMode = TextWrappingModes.NoWrap;
         roundTitleText.enableAutoSizing = true;
         roundTitleText.fontSizeMin = 38f;
         roundTitleText.fontSizeMax = 62f;
-        roundTitleText.rectTransform.anchorMin = new Vector2(0.5f, 0.76f);
-        roundTitleText.rectTransform.anchorMax = new Vector2(0.5f, 0.76f);
+        roundTitleText.rectTransform.anchorMin = new Vector2(0.5f, 0.72f);
+        roundTitleText.rectTransform.anchorMax = new Vector2(0.5f, 0.72f);
         roundTitleText.rectTransform.sizeDelta = new Vector2(820f, 92f);
-
-        winSubtitleText = CreateText(winObject.transform, "WinSubtitle", string.Empty, 18f, new Color(0.94f, 0.76f, 1f, 0.92f));
-        winSubtitleText.alignment = TextAlignmentOptions.Center;
-        winSubtitleText.characterSpacing = 2.6f;
-        winSubtitleText.rectTransform.anchorMin = new Vector2(0.5f, 0.64f);
-        winSubtitleText.rectTransform.anchorMax = new Vector2(0.5f, 0.64f);
-        winSubtitleText.rectTransform.sizeDelta = new Vector2(800f, 40f);
 
         roundInfoText = CreateText(winObject.transform, "RoundInfo", string.Empty, 26f, Color.white);
         roundInfoText.alignment = TextAlignmentOptions.Center;
@@ -400,8 +394,8 @@ public sealed class RoomRoundManager : MonoBehaviour
         roundInfoText.fontSizeMin = 18f;
         roundInfoText.fontSizeMax = 26f;
         roundInfoText.lineSpacing = 8f;
-        roundInfoText.rectTransform.anchorMin = new Vector2(0.5f, 0.43f);
-        roundInfoText.rectTransform.anchorMax = new Vector2(0.5f, 0.43f);
+        roundInfoText.rectTransform.anchorMin = new Vector2(0.5f, 0.47f);
+        roundInfoText.rectTransform.anchorMax = new Vector2(0.5f, 0.47f);
         roundInfoText.rectTransform.sizeDelta = new Vector2(790f, 170f);
 
         Button continueButton = CreateButton(winObject.transform, "ContinueButton", "CONTINUE", 260f);
@@ -665,6 +659,11 @@ public sealed class RoomRoundManager : MonoBehaviour
         roundFinished = true;
         StopAllCoroutines();
 
+        // Death ends the run. Remove its save immediately so returning to the
+        // menu cannot resume this Room or retain buffs from it.
+        MainMenuSaveSlotsUI.EraseSaveSlot(currentSlot);
+        currentSlot = -1;
+
         for(int i = 0; i < activeEnemies.Count; i++)
         {
             if(activeEnemies[i] != null)
@@ -680,17 +679,9 @@ public sealed class RoomRoundManager : MonoBehaviour
 
     private void NewGame()
     {
-        if(currentSlot >= 0)
-        {
-            PlayerPrefs.DeleteKey("Goetia_Slot_" + currentSlot + "_SelectedCard");
-            PlayerPrefs.DeleteKey("Goetia_Slot_" + currentSlot + "_SelectedCards");
-            PlayerPrefs.DeleteKey("Goetia_Slot_" + currentSlot + "_SelectionPending");
-            PlayerPrefs.DeleteKey("Goetia_Slot_" + currentSlot + "_RoundNumber");
-            PlayerPrefs.DeleteKey("Goetia_Slot_" + currentSlot + "_CardHistoryFormat");
-            PlayerPrefs.Save();
-        }
-
-        SceneTransitionFader.LoadScene("Shuffle");
+        // The previous slot was erased on death. Starting anew goes through the
+        // empty-slot flow, which creates a completely clean run.
+        SceneTransitionFader.LoadScene("Main Menu");
     }
 
     private void GoToMainMenu()
@@ -797,6 +788,7 @@ public sealed class RoomRoundManager : MonoBehaviour
             }
 
             PlayerPrefs.SetString("Goetia_Slot_" + currentSlot + "_SelectedCards", string.Join(",", history.ToArray()));
+            PlayerPrefs.SetInt(pendingKey, 0);
             PlayerPrefs.Save();
         }
 
@@ -860,9 +852,9 @@ public sealed class RoomRoundManager : MonoBehaviour
             }
         }
 
-        if(cleanedEntries.Count > 1 && cleanedEntries[0] == cleanedEntries[1])
+        for(int i = cleanedEntries.Count - 1; i > 0; i--)
         {
-            cleanedEntries.RemoveAt(1);
+            if(cleanedEntries[i] == cleanedEntries[i - 1]) cleanedEntries.RemoveAt(i);
         }
 
         if(cleanedEntries.Count > 0)

@@ -2369,8 +2369,8 @@ MonoBehaviour:
   pixelFontAsset: {fileID: 11400000, guid: f7da88fca5fe94b2182a21ba18ed6d8a, type: 2}
   rewardCardSprite: {fileID: 21300000, guid: ea5333b3df087449b914170d580087ec, type: 3}
   timerColor: {r: 1, g: 1, b: 1, a: 1}
-  panelColor: {r: 0.035, g: 0.015, b: 0.08, a: 0.96}
-  accentColor: {r: 0.9, g: 0.35, b: 1, a: 0.8784314}
+  panelColor: {r: 0.08, g: 0.12, b: 0.2, a: 0.985}
+  accentColor: {r: 0.47, g: 0.82, b: 1, a: 1}
 --- !u!1001 &918070863255623817
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ public class ShuffleManager : MonoBehaviour
 {
     // Version 1 accidentally duplicated the first selected card in a run.
     // This marker repairs existing slots once, without affecting real repeats.
-    private const int CardHistoryFormatVersion = 2;
+    private const int CardHistoryFormatVersion = 3;
 
     [Header("Cards")]
     public CardController cardPrefab;
@@ -691,11 +691,12 @@ public class ShuffleManager : MonoBehaviour
             }
         }
 
-        // Old saves began as "first,first". Removing only that entry keeps
-        // all later, intentionally repeated selections.
-        if(cleanedEntries.Count > 1 && cleanedEntries[0] == cleanedEntries[1])
+        // A pending selection used to be written twice in some saves. Collapse
+        // only adjacent equal entries; repetitions separated by other cards
+        // remain valid choices.
+        for(int i = cleanedEntries.Count - 1; i > 0; i--)
         {
-            cleanedEntries.RemoveAt(1);
+            if(cleanedEntries[i] == cleanedEntries[i - 1]) cleanedEntries.RemoveAt(i);
         }
 
         if(cleanedEntries.Count > 0)

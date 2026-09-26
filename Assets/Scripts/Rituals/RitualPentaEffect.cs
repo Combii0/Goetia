@@ -36,7 +36,8 @@ public sealed class RitualPentaEffect : MonoBehaviour
         RitualPentaEffect effect = Create(owner, pentaSprite, sortingOrder);
         if(effect != null)
         {
-            effect.transform.localPosition = new Vector3(0f, 0.55f, 0f);
+            // The ritual seal belongs at the target's centre, not above its head.
+            effect.transform.localPosition = Vector3.zero;
             effect.transform.localScale = Vector3.one * scale;
         }
         return effect;

@@ -897,9 +897,9 @@ MonoBehaviour:
   fallSpeedRange: {x: 35, y: 150}
   rotationSpeedRange: {x: -95, y: 95}
   glowChance: 0.28
-  backgroundColor: {r: 0.20140316, g: 0.11845853, b: 0.20754719, a: 1}
-  squareColor: {r: 0.59607846, g: 0.25882354, b: 0.58447385, a: 0.65}
-  brightSquareColor: {r: 0.4612086, g: 0.31764707, b: 0.6431373, a: 0.95}
+  backgroundColor: {r: 0.109398715, g: 0.10230509, b: 0.1792453, a: 1}
+  squareColor: {r: 0.59607846, g: 0.25882354, b: 0.58447385, a: 0.3882353}
+  brightSquareColor: {r: 0.4612086, g: 0.31764707, b: 0.6431373, a: 0.4745098}
 --- !u!1 &2040000004
 GameObject:
   m_ObjectHideFlags: 0

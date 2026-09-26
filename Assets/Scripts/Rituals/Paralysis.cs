@@ -9,11 +9,13 @@ public sealed class Paralysis : MonoBehaviour
     [SerializeField] private int pentaSortingOrder = 50;
     [SerializeField] private float duration = 2f;
     private bool isActive;
+    private bool usedThisRound;
 
     private void Update()
     {
-        if(!isActive && RitualCardUtility.IsActive("paralysis") && RitualCardUtility.ActivationPressed())
+        if(!isActive && !usedThisRound && RitualCardUtility.IsActive("paralysis") && RitualCardUtility.ActivationPressed())
         {
+            usedThisRound = true;
             StartCoroutine(Activate());
         }
     }
@@ -23,10 +25,10 @@ public sealed class Paralysis : MonoBehaviour
         isActive = true;
         List<Behaviour> disabledAbilities = new List<Behaviour>();
         List<Rigidbody2D> frozenBodies = new List<Rigidbody2D>();
-        FreezeEnemies(FindObjectsByType<Demon>(FindObjectsSortMode.None), disabledAbilities, frozenBodies);
-        FreezeEnemies(FindObjectsByType<Jelly>(FindObjectsSortMode.None), disabledAbilities, frozenBodies);
-        FreezeEnemies(FindObjectsByType<Carnage>(FindObjectsSortMode.None), disabledAbilities, frozenBodies);
-        FreezeEnemies(FindObjectsByType<MaskTank>(FindObjectsSortMode.None), disabledAbilities, frozenBodies);
+        FreezeEnemies(FindObjectsByType<Demon>(), disabledAbilities, frozenBodies);
+        FreezeEnemies(FindObjectsByType<Jelly>(), disabledAbilities, frozenBodies);
+        FreezeEnemies(FindObjectsByType<Carnage>(), disabledAbilities, frozenBodies);
+        FreezeEnemies(FindObjectsByType<MaskTank>(), disabledAbilities, frozenBodies);
 
         yield return new WaitForSeconds(duration);
 
