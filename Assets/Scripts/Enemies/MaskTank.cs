@@ -23,7 +23,6 @@ public class MaskTank : MonoBehaviour
     private bool isReturning;
     private bool isAttacking;
 
-    private float oldPosition;
     private float oldY;
 
     void Awake()
@@ -77,13 +76,15 @@ public class MaskTank : MonoBehaviour
 
             if(sleepyTimer <= 0)
             {
-                float oldPosition = Mathf.SmoothDamp(transform.position.y, oldY, ref velocityY, smoothTime);
-                transform.position = new Vector2(transform.position.x, oldPosition);
+                float returnY = Mathf.SmoothDamp(transform.position.y, oldY, ref velocityY, smoothTime);
+                transform.position = new Vector2(transform.position.x, returnY);
         
-                if(transform.position.y == oldY)
+                if(Mathf.Abs(transform.position.y - oldY) <= 0.01f)
                 {
+                    transform.position = new Vector2(transform.position.x, oldY);
                     isReturning = false;
                     sleepyTimer = sleepyPublicTimer;
+                    velocityY = 0f;
                     boxCollider.enabled = true;
                 }
             }
@@ -92,23 +93,35 @@ public class MaskTank : MonoBehaviour
         timer -= Time.deltaTime;
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("Floor"))
-        {
-            rb.linearVelocity = Vector2.zero;
-
-            timer = maxTimer;
-            enemyTimer = attackTimer;
-
-            isAttacking = false;
-            isReturning = true;
-
-            animator.SetBool("isAttacking", false);
-        }
+        HandleFloorContact(collision);
     }
 
-    void Boing()
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        HandleFloorContact(collision);
+    }
+
+    private void HandleFloorContact(Collision2D collision)
+    {
+        if(!isAttacking || !collision.gameObject.CompareTag("Floor"))
+        {
+            return;
+        }
+
+        rb.linearVelocity = Vector2.zero;
+        timer = maxTimer;
+        enemyTimer = attackTimer;
+
+        isAttacking = false;
+        isReturning = true;
+
+        animator.SetBool("isAttacking", false);
+        SceneMusicManager.PlayMaskTankImpactSfx();
+    }
+
+    private void Boing()
     {
         rb.linearVelocity = Vector2.down * 10;
     }

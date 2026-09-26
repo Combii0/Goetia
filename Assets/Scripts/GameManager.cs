@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
 
         healthPoints -= damage;
         healthPoints = Mathf.Max(healthPoints, 0f);
+        SceneMusicManager.PlayPlayerHitSfx();
         DamageTaken?.Invoke(healthPoints, maxHealthPoints);
 
         if(healthPoints <= 0)

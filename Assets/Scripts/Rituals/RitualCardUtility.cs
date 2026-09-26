@@ -27,9 +27,8 @@ public static class RitualCardUtility
 
     public static bool ActivationPressed()
     {
-        return (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-            || (Keyboard.current != null && (Keyboard.current.leftShiftKey.wasPressedThisFrame
+        return Keyboard.current != null && (Keyboard.current.leftShiftKey.wasPressedThisFrame
                 || Keyboard.current.rightShiftKey.wasPressedThisFrame
-                || Keyboard.current.eKey.wasPressedThisFrame));
+                || Keyboard.current.eKey.wasPressedThisFrame);
     }
 }

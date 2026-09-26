@@ -2,20 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>Ritual card: freezes every enemy and its abilities for two seconds.</summary>
+/// <summary>Ritual card: freezes every enemy and its abilities temporarily.</summary>
 public sealed class Paralysis : MonoBehaviour
 {
     [SerializeField] private Sprite pentaSprite;
     [SerializeField] private int pentaSortingOrder = 50;
-    [SerializeField] private float duration = 2f;
+    [SerializeField] private float duration = 5f;
+    [SerializeField, Min(0f)] private float initialActivationDelay = 4f;
+    [SerializeField, Min(1)] private int usesPerRound = 2;
     private bool isActive;
-    private bool usedThisRound;
+    private int usesThisRound;
+    private float activationAvailableAt;
+
+    private void OnEnable()
+    {
+        activationAvailableAt = Time.time + initialActivationDelay;
+    }
 
     private void Update()
     {
-        if(!isActive && !usedThisRound && RitualCardUtility.IsActive("paralysis") && RitualCardUtility.ActivationPressed())
+        if(!isActive
+            && usesThisRound < usesPerRound
+            && Time.time >= activationAvailableAt
+            && RitualCardUtility.IsActive("paralysis")
+            && RitualCardUtility.ActivationPressed())
         {
-            usedThisRound = true;
+            usesThisRound++;
             StartCoroutine(Activate());
         }
     }

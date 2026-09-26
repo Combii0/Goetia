@@ -123,6 +123,7 @@ public class Demon : MonoBehaviour
         if(attackIndicator != null) attackIndicator.SetActive(false);
         if(blueLightning != null) blueLightning.enabled = true;
         if(whiteLightning != null) whiteLightning.enabled = true;
+        SceneMusicManager.PlayDemonLightningSfx();
 
         CheckLightningDamage();
 

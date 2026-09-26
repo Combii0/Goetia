@@ -72,6 +72,7 @@ public sealed class PauseMenuController : MonoBehaviour
 
         paused = true;
         Time.timeScale = 0f;
+        SceneMusicManager.SetPaused(true);
         root.SetActive(true);
         ShowMain();
         Cursor.visible = true;
@@ -85,6 +86,7 @@ public sealed class PauseMenuController : MonoBehaviour
         if(player != null) player.enabled = playerWasEnabled;
         Time.timeScale = 1f;
         paused = false;
+        SceneMusicManager.SetPaused(false);
     }
 
     private void ShowSettings()
@@ -258,6 +260,7 @@ public sealed class PauseMenuController : MonoBehaviour
         colors.highlightedColor = Color.white;
         colors.pressedColor = Color.white;
         button.colors = colors;
+        button.onClick.AddListener(SceneMusicManager.PlayUiSelectionSfx);
         button.onClick.AddListener(action);
         buttonObject.AddComponent<PauseMenuButtonHover>().Configure(image, color, label == "CLOSE GAME" ? new Color(0.78f, 0.14f, 0.34f, 1f) : buttonHoverColor);
         SetAnchored(buttonObject.GetComponent<RectTransform>(), new Vector2(0.5f, y), new Vector2(320f, 48f));

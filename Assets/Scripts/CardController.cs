@@ -142,6 +142,7 @@ public class CardController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
 
         pointerInside = true;
+        SceneMusicManager.PlayUiSelectionSfx();
 
         ShowFront();
 

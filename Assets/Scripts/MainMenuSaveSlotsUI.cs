@@ -55,13 +55,13 @@ public class MainMenuSaveSlotsUI : MonoBehaviour
     [SerializeField] private float fadeDuration = 0.8f;
 
     [Header("SFX")]
-    [SerializeField] private AudioClip openSfx;
-    [SerializeField] private AudioClip buttonSfx;
-    [SerializeField] private AudioClip slotConfirmSfx;
+    public AudioClip openSfx;
+    public AudioClip buttonSfx;
+    public AudioClip slotConfirmSfx;
 
-    [SerializeField, Range(0f, 1f)] private float openSfxVolume = 0.85f;
-    [SerializeField, Range(0f, 1f)] private float buttonSfxVolume = 0.78f;
-    [SerializeField, Range(0f, 1f)] private float slotConfirmSfxVolume = 0.92f;
+    [Range(0f, 1f)] public float openSfxVolume = 0.85f;
+    [Range(0f, 1f)] public float buttonSfxVolume = 0.78f;
+    [Range(0f, 1f)] public float slotConfirmSfxVolume = 0.92f;
 
     private Canvas canvas;
     private CanvasGroup rootCanvasGroup;
@@ -523,7 +523,9 @@ public class MainMenuSaveSlotsUI : MonoBehaviour
 
         pendingDeleteSlotIndex = -1;
 
-        PlayUiSfx(buttonSfx, buttonSfxVolume);
+        PlayUiSfx(
+            slotConfirmSfx != null ? slotConfirmSfx : buttonSfx,
+            slotConfirmSfx != null ? slotConfirmSfxVolume : buttonSfxVolume);
 
         HideDeletePopup();
         RefreshSlots();
@@ -721,6 +723,7 @@ public class MainMenuSaveSlotsUI : MonoBehaviour
     private void CancelDelete()
     {
         pendingDeleteSlotIndex = -1;
+        PlayUiSfx(buttonSfx, buttonSfxVolume);
         HideDeletePopup();
     }
 
@@ -774,7 +777,10 @@ public class MainMenuSaveSlotsUI : MonoBehaviour
         rootCanvasGroup.interactable = false;
         rootCanvasGroup.blocksRaycasts = true;
 
-        PlayUiSfx(openSfx, openSfxVolume);
+        if(openSfx != null)
+        {
+            PlayUiSfx(openSfx, openSfxVolume);
+        }
 
         if(introRoutine != null)
         {
@@ -930,10 +936,11 @@ public class MainMenuSaveSlotsUI : MonoBehaviour
     {
         if(clip == null)
         {
+            SceneMusicManager.PlayUiSelectionSfx();
             return;
         }
 
-        AudioSource.PlayClipAtPoint(clip, Vector3.zero, volume);
+        SceneMusicManager.PlayOneShotSfx(clip, volume);
     }
 
     private TextMeshProUGUI CreateTitle(Transform parent, string value, float fontSize)

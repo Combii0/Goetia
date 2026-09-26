@@ -273,6 +273,78 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 357686851}
   m_CullTransparentMesh: 1
+--- !u!1 &580805742
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 580805745}
+  - component: {fileID: 580805744}
+  - component: {fileID: 580805743}
+  m_Layer: 5
+  m_Name: GOBBO
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &580805743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580805742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 2800000, guid: 3a5f9dfd48a824d2bb4743413f72dc02, type: 3}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &580805744
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580805742}
+  m_CullTransparentMesh: 1
+--- !u!224 &580805745
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580805742}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1865913746}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 5.6999, y: -23.9555}
+  m_SizeDelta: {x: 994.4, y: 716.2203}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &590935381
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,6 +557,116 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 606369223}
   m_CullTransparentMesh: 1
+--- !u!1 &710000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 710000002}
+  - component: {fileID: 710000003}
+  m_Layer: 0
+  m_Name: SceneMusicManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &710000002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710000001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &710000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f0a7b1a5b734d5dbf53e76d9b9d68c2, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SceneMusicManager
+  sceneMusicMode: 0
+  keepCurrentMusic: 0
+  sceneMusic: {fileID: 8300000, guid: 63ed590c178aa4f15bc99c172795d735, type: 3}
+  pauseMusic: {fileID: 8300000, guid: ae5cb6fe773fc430bbe172ce56264506, type: 3}
+  sceneMusicVolume: 1
+  pausedGameplayVolume: 0
+  pauseMusicVolume: 1
+  fadeDuration: 1
+  endStateMusicVolume: 0.15
+  endStateFadeDuration: 1.5
+  uiSelectionSfx: {fileID: 8300000, guid: afb67e343af3a4659a1c94f8da93f8be, type: 3}
+  cardSelectionSfx: {fileID: 8300000, guid: d395830ec379c4c23948920914c440c8, type: 3}
+  maskTankImpactSfx: {fileID: 8300000, guid: 3466dbba2e36a4a449c7f8069841aac8, type: 3}
+  demonLightningSfx: {fileID: 8300000, guid: 4aace827593c84ba9b62eef4245cef1e, type: 3}
+  uiSelectionSfxVolume: 0.8
+  cardSelectionSfxVolume: 1
+  maskTankImpactSfxVolume: 1
+  demonLightningSfxVolume: 1
+--- !u!1 &954475888
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 954475890}
+  - component: {fileID: 954475889}
+  m_Layer: 0
+  m_Name: GobboController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &954475889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 954475888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bdf93897fad543e58a23b9c352fe703, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::GobboController
+  gobbo: {fileID: 580805742}
+  appearanceSfx: {fileID: 8300000, guid: bc49fb8794a554a7e8d1d63f8329a556, type: 3}
+  appearanceSfxVolume: 1
+  visibleDuration: 1
+--- !u!4 &954475890
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 954475888}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.71483, y: -1.17134, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1461961608
 GameObject:
   m_ObjectHideFlags: 0
@@ -720,6 +902,7 @@ RectTransform:
   - {fileID: 1461961609}
   - {fileID: 606369224}
   - {fileID: 357686852}
+  - {fileID: 580805745}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -847,7 +1030,9 @@ MonoBehaviour:
   saveSlotsUI: {fileID: 1880439779}
   fadeCanvasGroup: {fileID: 2040000006}
   fadeInDuration: 0.8
+  gobboController: {fileID: 954475889}
   initialColor: {r: 1, g: 1, b: 1, a: 0.7647059}
+  gobbo: 0
 --- !u!1 &2040000001
 GameObject:
   m_ObjectHideFlags: 0
@@ -1060,3 +1245,5 @@ SceneRoots:
   - {fileID: 1880439780}
   - {fileID: 2040000002}
   - {fileID: 2040000005}
+  - {fileID: 710000002}
+  - {fileID: 954475890}

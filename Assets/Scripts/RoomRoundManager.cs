@@ -30,6 +30,10 @@ public sealed class RoomRoundManager : MonoBehaviour
     public Color panelColor = new Color(0.08f, 0.12f, 0.20f, 0.985f);
     public Color accentColor = new Color(0.47f, 0.82f, 1f, 1f);
 
+    [Header("Strict Room Bounds")]
+    public Vector2 roomMinimum = new Vector2(-10f, -3f);
+    public Vector2 roomMaximum = new Vector2(10f, 8f);
+
     private readonly List<GameObject> enemyTemplates = new List<GameObject>();
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
 
@@ -112,6 +116,88 @@ public sealed class RoomRoundManager : MonoBehaviour
         {
             FinishRound();
         }
+    }
+
+    private void LateUpdate()
+    {
+        KeepInsideRoom(player);
+
+        for(int i = 0; i < activeEnemies.Count; i++)
+        {
+            if(activeEnemies[i] != null && activeEnemies[i].activeInHierarchy)
+            {
+                KeepInsideRoom(activeEnemies[i].transform);
+            }
+        }
+    }
+
+    private void KeepInsideRoom(Transform target)
+    {
+        if(target == null)
+        {
+            return;
+        }
+
+        Collider2D boundaryCollider = FindBoundaryCollider(target);
+        Vector2 shift = Vector2.zero;
+
+        if(boundaryCollider != null)
+        {
+            Bounds bounds = boundaryCollider.bounds;
+            if(bounds.min.x < roomMinimum.x) shift.x += roomMinimum.x - bounds.min.x;
+            if(bounds.max.x > roomMaximum.x) shift.x += roomMaximum.x - bounds.max.x;
+            if(bounds.min.y < roomMinimum.y) shift.y += roomMinimum.y - bounds.min.y;
+            if(bounds.max.y > roomMaximum.y) shift.y += roomMaximum.y - bounds.max.y;
+        }
+        else
+        {
+            Vector3 position = target.position;
+            shift.x = Mathf.Clamp(position.x, roomMinimum.x, roomMaximum.x) - position.x;
+            shift.y = Mathf.Clamp(position.y, roomMinimum.y, roomMaximum.y) - position.y;
+        }
+
+        if(shift == Vector2.zero)
+        {
+            return;
+        }
+
+        target.position += (Vector3)shift;
+
+        Rigidbody2D body = target.GetComponentInChildren<Rigidbody2D>();
+        if(body != null)
+        {
+            Vector2 velocity = body.linearVelocity;
+            if(!Mathf.Approximately(shift.x, 0f)) velocity.x = 0f;
+            if(!Mathf.Approximately(shift.y, 0f)) velocity.y = 0f;
+            body.linearVelocity = velocity;
+        }
+    }
+
+    private static Collider2D FindBoundaryCollider(Transform target)
+    {
+        Collider2D[] colliders = target.GetComponentsInChildren<Collider2D>();
+        Collider2D fallback = null;
+
+        for(int i = 0; i < colliders.Length; i++)
+        {
+            Collider2D candidate = colliders[i];
+            if(candidate == null || !candidate.enabled || !candidate.gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+
+            if(!candidate.isTrigger)
+            {
+                return candidate;
+            }
+
+            if(fallback == null)
+            {
+                fallback = candidate;
+            }
+        }
+
+        return fallback;
     }
 
     private void CollectEnemyTemplates()
@@ -270,6 +356,7 @@ public sealed class RoomRoundManager : MonoBehaviour
     private void FinishRound()
     {
         roundFinished = true;
+        SceneMusicManager.FadeForEndState();
 
         for(int i = 0; i < activeEnemies.Count; i++)
         {
@@ -361,6 +448,7 @@ public sealed class RoomRoundManager : MonoBehaviour
         cardImage.color = rewardCardSprite == null ? accentColor : Color.white;
         Button cardButton = cardObject.AddComponent<Button>();
         cardButton.transition = Selectable.Transition.None;
+        cardButton.onClick.AddListener(SceneMusicManager.PlayUiSelectionSfx);
         cardButton.onClick.AddListener(ShowWinPanel);
         AddGlow(cardObject);
         rewardCardHover = cardObject.AddComponent<RoomRewardCardHover>();
@@ -476,6 +564,7 @@ public sealed class RoomRoundManager : MonoBehaviour
         Image image = buttonObject.AddComponent<Image>();
         image.color = accentColor;
         Button button = buttonObject.AddComponent<Button>();
+        button.onClick.AddListener(SceneMusicManager.PlayUiSelectionSfx);
         TMP_Text text = CreateText(buttonObject.transform, "Label", label, 30f, Color.white);
         text.alignment = TextAlignmentOptions.Center;
         text.rectTransform.anchorMin = Vector2.zero;
@@ -658,6 +747,7 @@ public sealed class RoomRoundManager : MonoBehaviour
 
         roundFinished = true;
         StopAllCoroutines();
+        SceneMusicManager.FadeForEndState();
 
         // Death ends the run. Remove its save immediately so returning to the
         // menu cannot resume this Room or retain buffs from it.

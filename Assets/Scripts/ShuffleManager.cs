@@ -354,13 +354,27 @@ public class ShuffleManager : MonoBehaviour
         bool ritualsAvailableThisRound = roundNumber % 3 != 1;
         bool ritualChosenLastRound = currentSlot >= 0
             && PlayerPrefs.GetInt("Goetia_Slot_" + currentSlot + "_LastSelectionWasRitual", 0) == 1;
+        string activeRitualId = currentSlot >= 0
+            ? PlayerPrefs.GetString("Goetia_Slot_" + currentSlot + "_ActiveRitual", string.Empty)
+            : string.Empty;
 
         for(int i = 0; i < availableCards.Length; i++)
         {
-            if(availableCards[i] != null && ((ritualsAvailableThisRound && !ritualChosenLastRound)
-                || !RitualCardUtility.IsRitual(availableCards[i])))
+            CardData candidate = availableCards[i];
+            if(candidate == null)
             {
-                cardPool.Add(availableCards[i]);
+                continue;
+            }
+
+            bool isRitual = RitualCardUtility.IsRitual(candidate);
+            bool isCurrentRitual = isRitual
+                && !string.IsNullOrEmpty(activeRitualId)
+                && string.Equals(candidate.cardID, activeRitualId, System.StringComparison.OrdinalIgnoreCase);
+            bool isAllowedThisRound = !isRitual || (ritualsAvailableThisRound && !ritualChosenLastRound);
+
+            if(isAllowedThisRound && !isCurrentRitual)
+            {
+                cardPool.Add(candidate);
             }
         }
 
@@ -551,6 +565,7 @@ public class ShuffleManager : MonoBehaviour
         }
 
         cardSelected = true;
+        SceneMusicManager.PlayCardSelectionSfx();
 
         for(int i = 0; i < finalCards.Count; i++)
         {
