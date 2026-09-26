@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class PlayerController : MonoBehaviour
 
     private float movementInput;
     private bool isGrounded;
+    private bool hasExtraJump;
+    private bool extraJumpAvailable;
+    public event Action DoubleJumpUsed;
 
     public float raycastLenght;
     public LayerMask groundLayer;
@@ -61,6 +65,7 @@ public class PlayerController : MonoBehaviour
         if(isGrounded)
         {
             coyoteTimeCounter = coyoteTime;
+            extraJumpAvailable = hasExtraJump;
         }
         else
         {
@@ -69,12 +74,14 @@ public class PlayerController : MonoBehaviour
 
         if(Keyboard.current.spaceKey.wasPressedThisFrame && coyoteTimeCounter > 0)
         {
-            rb.AddForce(Vector2.up * jumpingForce, ForceMode2D.Impulse);
-
+            Jump();
             coyoteTimeCounter = 0;
-
-            isJumping = true;
-            isFalling = false;
+        }
+        else if(Keyboard.current.spaceKey.wasPressedThisFrame && hasExtraJump && extraJumpAvailable)
+        {
+            Jump();
+            extraJumpAvailable = false;
+            DoubleJumpUsed?.Invoke();
         }
         
         AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
@@ -107,6 +114,21 @@ public class PlayerController : MonoBehaviour
             sprite.color = Color.red;
         }
         else{sprite.color = Color.white;}
+    }
+
+    /// <summary>Grants one additional mid-air jump until this controller is disabled.</summary>
+    public void EnableDoubleJump()
+    {
+        hasExtraJump = true;
+        extraJumpAvailable = true;
+    }
+
+    private void Jump()
+    {
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+        rb.AddForce(Vector2.up * jumpingForce, ForceMode2D.Impulse);
+        isJumping = true;
+        isFalling = false;
     }
 
     void OnDrawGizmos()

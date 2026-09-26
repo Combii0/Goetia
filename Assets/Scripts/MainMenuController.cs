@@ -7,6 +7,8 @@ public class MainMenuManager : MonoBehaviour
 {
     public TMP_Text pressAnyButtonText;
     public MainMenuSaveSlotsUI saveSlotsUI;
+    public CanvasGroup fadeCanvasGroup;
+    public float fadeInDuration = 0.8f;
 
     private bool menuStarted;
     public Color initialColor;
@@ -15,6 +17,32 @@ public class MainMenuManager : MonoBehaviour
     {
         menuStarted = false;
         pressAnyButtonText.color = initialColor;
+    }
+
+    void Start()
+    {
+        if(fadeCanvasGroup != null)
+        {
+            StartCoroutine(FadeIn());
+        }
+    }
+
+    IEnumerator FadeIn()
+    {
+        float elapsed = 0f;
+        float startingAlpha = fadeCanvasGroup.alpha;
+
+        fadeCanvasGroup.blocksRaycasts = true;
+
+        while(elapsed < fadeInDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            fadeCanvasGroup.alpha = Mathf.Lerp(startingAlpha, 0f, Mathf.Clamp01(elapsed / fadeInDuration));
+            yield return null;
+        }
+
+        fadeCanvasGroup.alpha = 0f;
+        fadeCanvasGroup.blocksRaycasts = false;
     }
 
     void Update()

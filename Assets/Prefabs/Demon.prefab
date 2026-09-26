@@ -116,7 +116,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 8442247372213805325, guid: dbdfdf59b7344409bbdb2da8f7f76c49, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -178,6 +178,17 @@ MonoBehaviour:
   lightningWidth: 0.25
   lightningPoints: 30
   lightningRandomness: 0.15
+  horizontalMargin: 1.5
+  topMargin: 1.5
+  bottomMargin: 2
+  minimumPlayerDistance: 2
+  minimumDemonDistance: 1.5
+  teleportAttempts: 20
+  teleportDelayAfterAttack: 0.5
+  disappearTime: 0.2
+  teleportPause: 0.08
+  appearTime: 0.25
+  teleportMinScale: 0.15
 --- !u!1 &6922043101656989288
 GameObject:
   m_ObjectHideFlags: 0

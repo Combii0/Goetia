@@ -413,9 +413,10 @@ public class MainMenuSaveSlotsUI : MonoBehaviour
 
                 string lastScene = PlayerPrefs.GetString(GetKey(i, "Scene"), "ROOM");
                 string lastSave = PlayerPrefs.GetString(GetKey(i, "LastSave"), "UNKNOWN");
+                int roundNumber = Mathf.Max(1, PlayerPrefs.GetInt(GetKey(i, "RoundNumber"), 1));
 
                 widgets.infoText.color = TextColor;
-                widgets.infoText.text = $"AREA\n{lastScene.ToUpperInvariant()}\n\nLAST SAVE\n{lastSave.ToUpperInvariant()}";
+                widgets.infoText.text = $"AREA\n{lastScene.ToUpperInvariant()}\n\nROUND {roundNumber}\n\nLAST SAVE\n{lastSave.ToUpperInvariant()}";
             }
             else
             {
@@ -460,6 +461,14 @@ public class MainMenuSaveSlotsUI : MonoBehaviour
 
     private void CreateSlot(int slotIndex)
     {
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "SelectedCard"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "SelectedCards"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "SelectionPending"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "RoundNumber"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "CardHistoryFormat"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "BloodSelections"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "ActiveRitual"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "LastSelectionWasRitual"));
         PlayerPrefs.SetInt(GetKey(slotIndex, "Exists"), 1);
         PlayerPrefs.SetString(GetKey(slotIndex, "Scene"), "Room");
         PlayerPrefs.SetString(GetKey(slotIndex, "LastSave"), DateTime.Now.ToString("dd/MM/yyyy HH:mm"));
@@ -525,6 +534,14 @@ public class MainMenuSaveSlotsUI : MonoBehaviour
         PlayerPrefs.DeleteKey(GetKey(slotIndex, "Exists"));
         PlayerPrefs.DeleteKey(GetKey(slotIndex, "Scene"));
         PlayerPrefs.DeleteKey(GetKey(slotIndex, "LastSave"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "SelectedCard"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "SelectedCards"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "SelectionPending"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "RoundNumber"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "CardHistoryFormat"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "BloodSelections"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "ActiveRitual"));
+        PlayerPrefs.DeleteKey(GetKey(slotIndex, "LastSelectionWasRitual"));
 
         if(CurrentSlot == slotIndex)
         {
@@ -553,7 +570,7 @@ public class MainMenuSaveSlotsUI : MonoBehaviour
 
         fadeCanvasGroup.alpha = 1f;
 
-        SceneManager.LoadScene(transitionScene);
+        SceneTransitionFader.LoadScene(transitionScene);
     }
 
     private void BuildFade()
@@ -1014,7 +1031,7 @@ public class MainMenuSaveSlotsUI : MonoBehaviour
 
     private static void EnsureEventSystemExists()
     {
-        if(EventSystem.current != null || FindFirstObjectByType<EventSystem>() != null)
+        if(EventSystem.current != null || FindAnyObjectByType<EventSystem>() != null)
         {
             return;
         }

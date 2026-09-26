@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3cc0069aa733c403e95f0fa421e26c1d, type: 3}
-  m_Name: Jelly
+  m_Name: Carnage
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardID: jelly
-  cardName: Jelly
-  description: He will follow you; if he catches you, he will slow you down; you
-    will be able to bounce on him.
-  category: Debuffer
-  frontSprite: {fileID: 21300000, guid: af7fd3616568548fda5203f4b41b06e4, type: 3}
+  cardID: blood
+  cardName: Blood
+  description: Its crimson gaze seizes your body and stills your escape. Do not look
+    at his eye.
+  category: Trap
+  frontSprite: {fileID: 21300000, guid: 96f6d17afe80f40d48aa2b86db899a7b, type: 3}

@@ -10,11 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3cc0069aa733c403e95f0fa421e26c1d, type: 3}
-  m_Name: Jelly
+  m_Name: Paralysis
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardID: jelly
-  cardName: Jelly
-  description: He will follow you; if he catches you, he will slow you down; you
-    will be able to bounce on him.
-  category: Debuffer
-  frontSprite: {fileID: 21300000, guid: af7fd3616568548fda5203f4b41b06e4, type: 3}
+  cardID: paralysis
+  cardName: Paralysis
+  description: The seal awakens, and all hostile motion is bound.
+  category: Ritual
+  frontSprite: {fileID: 21300000, guid: 017724f3a9ca849d7bd79441345a0049, type: 3}

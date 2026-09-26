@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 333481916}
   - component: {fileID: 333481915}
   - component: {fileID: 333481914}
+  - component: {fileID: 333481917}
   m_Layer: 5
   m_Name: Fade
   m_TagString: Untagged
@@ -207,6 +208,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 333481912}
   m_CullTransparentMesh: 1
+--- !u!114 &333481917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 333481912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f2a7c9d6e1b4a58b0c3d7e9f1426a85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneFadeController
+  fadeCanvasGroup: {fileID: 333481914}
+  fadeInDuration: 0.65
+  fadeOutDuration: 0.5
 --- !u!1 &512688461
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,8 +349,12 @@ MonoBehaviour:
   cardsParent: {fileID: 1086192948}
   availableCards:
   - {fileID: 11400000, guid: 1ccd7ee3c837d47ea81c641a8f2ca9f7, type: 2}
-  - {fileID: 11400000, guid: 9a1dea50d715f47b78069515b0e19d59, type: 2}
   - {fileID: 11400000, guid: fc1397a82f66047f596dbba6ea2f9f78, type: 2}
+  - {fileID: 11400000, guid: 9a1dea50d715f47b78069515b0e19d59, type: 2}
+  - {fileID: 11400000, guid: 96b3eca5ba03c4c278b205c830c22ad6, type: 2}
+  - {fileID: 11400000, guid: 39cae2b8a0314493a8ea83d82f29ea84, type: 2}
+  - {fileID: 11400000, guid: 7b6a60d3912c44f3894405c1b85e6d02, type: 2}
+  - {fileID: 11400000, guid: 5bd6efc693fe4471ab341dabb6c950e6, type: 2}
   cardBackSprite: {fileID: 21300000, guid: ea5333b3df087449b914170d580087ec, type: 3}
   cardSpacing: 4
   cardsY: 0
@@ -365,6 +385,9 @@ MonoBehaviour:
   cardNameText: {fileID: 1028957911}
   categoryText: {fileID: 1535399691}
   descriptionText: {fileID: 1366422462}
+  roundText: {fileID: 0}
+  roundTextColor: {r: 1, g: 1, b: 1, a: 1}
+  roundTextSize: 24
   letterDelay: 0.025
   selectedShuffleDuration: 1.2
   selectedShuffleStrength: 0.35
@@ -648,7 +671,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -216.11014, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1151,6 +1174,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4000000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4000000002}
+  - component: {fileID: 4000000003}
+  m_Layer: 0
+  m_Name: ShuffleProceduralBackground
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4000000002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4000000001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4000000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4000000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e1f4b8c2d9a4057b3f6e0c1a8249d52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShuffleProceduralBackground
+  squareCount: 52
+  squareSizeRange: {x: 18, y: 86}
+  orbitRadiusRange: {x: 180, y: 820}
+  orbitSpeedRange: {x: -0.18, y: 0.18}
+  backgroundColor: {r: 0.018, g: 0.006, b: 0.045, a: 1}
+  squareColor: {r: 0.3, g: 0.07, b: 0.46, a: 0.42}
+  highlightColor: {r: 0.88, g: 0.18, b: 0.72, a: 0.68}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1160,3 +1234,4 @@ SceneRoots:
   - {fileID: 1086192948}
   - {fileID: 1539250430}
   - {fileID: 1750195443}
+  - {fileID: 4000000002}

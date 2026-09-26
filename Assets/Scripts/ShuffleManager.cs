@@ -4,9 +4,14 @@ using UnityEngine.InputSystem;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class ShuffleManager : MonoBehaviour
 {
+    // Version 1 accidentally duplicated the first selected card in a run.
+    // This marker repairs existing slots once, without affecting real repeats.
+    private const int CardHistoryFormatVersion = 2;
+
     [Header("Cards")]
     public CardController cardPrefab;
     public Transform cardsParent;
@@ -61,6 +66,11 @@ public class ShuffleManager : MonoBehaviour
     public TMP_Text categoryText;
     public TMP_Text descriptionText;
 
+    [Header("Round UI")]
+    [SerializeField] private TMP_Text roundText;
+    [SerializeField] private Color roundTextColor = Color.white;
+    [SerializeField, Min(12f)] private float roundTextSize = 24f;
+
     [Header("Text Animation")]
     public float letterDelay = 0.025f;
 
@@ -89,6 +99,13 @@ public class ShuffleManager : MonoBehaviour
     {
         cardSelected = false;
 
+        int currentSlot = PlayerPrefs.GetInt("Goetia_CurrentSlot", -1);
+        if(currentSlot >= 0)
+        {
+            MigrateCardHistory(currentSlot);
+            PlayerPrefs.SetInt("Goetia_Slot_" + currentSlot + "_SelectionPending", 0);
+        }
+
         introPlaying = false;
         skipIntro = false;
 
@@ -105,6 +122,51 @@ public class ShuffleManager : MonoBehaviour
             fadeCanvas.alpha = 0;
             fadeCanvas.blocksRaycasts = false;
         }
+
+        SetupRoundLabel(currentSlot);
+    }
+
+    private void SetupRoundLabel(int currentSlot)
+    {
+        int roundNumber = currentSlot >= 0
+            ? Mathf.Max(1, PlayerPrefs.GetInt("Goetia_Slot_" + currentSlot + "_RoundNumber", 1))
+            : 1;
+
+        if(roundText == null)
+        {
+            Canvas sceneCanvas = cardInfo != null ? cardInfo.GetComponentInParent<Canvas>() : FindAnyObjectByType<Canvas>();
+            if(sceneCanvas == null)
+            {
+                return;
+            }
+
+            GameObject labelObject = new GameObject("RoundLabel");
+            labelObject.transform.SetParent(sceneCanvas.transform, false);
+
+            RectTransform rect = labelObject.AddComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.5f, 0f);
+            rect.anchorMax = new Vector2(0.5f, 0f);
+            rect.pivot = new Vector2(0.5f, 0f);
+            rect.anchoredPosition = new Vector2(0f, 42f);
+            rect.sizeDelta = new Vector2(420f, 54f);
+
+            TextMeshProUGUI label = labelObject.AddComponent<TextMeshProUGUI>();
+            label.font = cardNameText != null ? cardNameText.font : TMP_Settings.defaultFontAsset;
+            label.fontSize = roundTextSize;
+            label.fontStyle = FontStyles.Bold;
+            label.alignment = TextAlignmentOptions.Center;
+            label.raycastTarget = false;
+
+            Outline outline = labelObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0.04f, 0f, 0.08f, 0.9f);
+            outline.effectDistance = new Vector2(3f, -3f);
+
+            roundText = label;
+        }
+
+        roundText.fontSize = roundTextSize;
+        roundText.color = roundTextColor;
+        roundText.text = "ROUND " + roundNumber;
     }
 
     void Start()
@@ -286,9 +348,17 @@ public class ShuffleManager : MonoBehaviour
 
         List<CardData> cardPool = new List<CardData>();
 
+        int currentSlot = PlayerPrefs.GetInt("Goetia_CurrentSlot", -1);
+        int roundNumber = currentSlot >= 0
+            ? Mathf.Max(1, PlayerPrefs.GetInt("Goetia_Slot_" + currentSlot + "_RoundNumber", 1)) : 1;
+        bool ritualsAvailableThisRound = roundNumber % 3 != 1;
+        bool ritualChosenLastRound = currentSlot >= 0
+            && PlayerPrefs.GetInt("Goetia_Slot_" + currentSlot + "_LastSelectionWasRitual", 0) == 1;
+
         for(int i = 0; i < availableCards.Length; i++)
         {
-            if(availableCards[i] != null)
+            if(availableCards[i] != null && ((ritualsAvailableThisRound && !ritualChosenLastRound)
+                || !RitualCardUtility.IsRitual(availableCards[i])))
             {
                 cardPool.Add(availableCards[i]);
             }
@@ -516,8 +586,124 @@ public class ShuffleManager : MonoBehaviour
             return;
         }
 
-        PlayerPrefs.SetString("Goetia_Slot_" + currentSlot + "_SelectedCard", card.cardID);
+        string historyKey = "Goetia_Slot_" + currentSlot + "_SelectedCards";
+        List<string> previousCards = ReadHistoryEntries(PlayerPrefs.GetString(historyKey, string.Empty));
+        previousCards.RemoveAll(RitualCardUtility.IsRitual);
+        int roundNumber = Mathf.Max(1, PlayerPrefs.GetInt("Goetia_Slot_" + currentSlot + "_RoundNumber", 1));
+        int previousRoundCount = roundNumber - 1;
 
+        // A Shuffle choice belongs to one specific Room. If the player returns
+        // to the same Shuffle, replace that pending choice instead of appending
+        // a second enemy and shifting every subsequent round.
+        if(previousCards.Count > previousRoundCount)
+        {
+            previousCards.RemoveRange(previousRoundCount, previousCards.Count - previousRoundCount);
+        }
+
+        bool isRitual = RitualCardUtility.IsRitual(card);
+        bool isMaskTank = card.cardID == "totem" || card.cardID == "masktank" || card.cardID == "taskmask";
+        bool isBlood = card.cardID == "blood";
+        bool alreadyHasMaskTank = false;
+        bool alreadyHasBlood = false;
+
+        for(int i = 0; i < previousCards.Count; i++)
+        {
+            if(previousCards[i] == "totem" || previousCards[i] == "masktank" || previousCards[i] == "taskmask")
+            {
+                alreadyHasMaskTank = true;
+            }
+
+            if(previousCards[i] == "blood") alreadyHasBlood = true;
+        }
+
+        if(!isRitual && (!isMaskTank || !alreadyHasMaskTank) && (!isBlood || !alreadyHasBlood))
+        {
+            previousCards.Add(card.cardID);
+        }
+
+        // Blood never creates another Carnage, but each selection empowers the
+        // one that is already stalking the Room.
+        if(isBlood)
+        {
+            string bloodSelectionsKey = "Goetia_Slot_" + currentSlot + "_BloodSelections";
+            PlayerPrefs.SetInt(bloodSelectionsKey, PlayerPrefs.GetInt(bloodSelectionsKey, 0) + 1);
+        }
+
+        // A ritual is a player ability, never an enemy. Selecting a new one
+        // replaces the previous active ritual for this save slot.
+        if(isRitual)
+        {
+            RitualCardUtility.SetActive(card.cardID);
+        }
+
+        PlayerPrefs.SetInt("Goetia_Slot_" + currentSlot + "_LastSelectionWasRitual", isRitual ? 1 : 0);
+
+        PlayerPrefs.SetString(historyKey, string.Join(",", previousCards.ToArray()));
+        PlayerPrefs.SetString("Goetia_Slot_" + currentSlot + "_SelectedCard", card.cardID);
+        PlayerPrefs.SetInt("Goetia_Slot_" + currentSlot + "_CardHistoryFormat", CardHistoryFormatVersion);
+        PlayerPrefs.SetInt("Goetia_Slot_" + currentSlot + "_SelectionPending", 1);
+
+        PlayerPrefs.Save();
+    }
+
+    private List<string> ReadHistoryEntries(string value)
+    {
+        string[] entries = value.Split(',');
+        List<string> history = new List<string>();
+
+        for(int i = 0; i < entries.Length; i++)
+        {
+            if(!string.IsNullOrWhiteSpace(entries[i]))
+            {
+                history.Add(entries[i]);
+            }
+        }
+
+        return history;
+    }
+
+    private void MigrateCardHistory(int slot)
+    {
+        string versionKey = "Goetia_Slot_" + slot + "_CardHistoryFormat";
+        if(PlayerPrefs.GetInt(versionKey, 0) >= CardHistoryFormatVersion)
+        {
+            return;
+        }
+
+        string historyKey = "Goetia_Slot_" + slot + "_SelectedCards";
+        string[] entries = PlayerPrefs.GetString(historyKey, string.Empty).Split(',');
+        List<string> cleanedEntries = new List<string>();
+
+        for(int i = 0; i < entries.Length; i++)
+        {
+            if(!string.IsNullOrWhiteSpace(entries[i]))
+            {
+                cleanedEntries.Add(entries[i]);
+            }
+        }
+
+        if(cleanedEntries.Count == 0)
+        {
+            string legacyCard = PlayerPrefs.GetString("Goetia_Slot_" + slot + "_SelectedCard", string.Empty);
+            if(!string.IsNullOrWhiteSpace(legacyCard))
+            {
+                cleanedEntries.Add(legacyCard);
+            }
+        }
+
+        // Old saves began as "first,first". Removing only that entry keeps
+        // all later, intentionally repeated selections.
+        if(cleanedEntries.Count > 1 && cleanedEntries[0] == cleanedEntries[1])
+        {
+            cleanedEntries.RemoveAt(1);
+        }
+
+        if(cleanedEntries.Count > 0)
+        {
+            PlayerPrefs.SetString(historyKey, string.Join(",", cleanedEntries.ToArray()));
+        }
+
+        PlayerPrefs.SetInt(versionKey, CardHistoryFormatVersion);
         PlayerPrefs.Save();
     }
 
@@ -529,9 +715,7 @@ public class ShuffleManager : MonoBehaviour
 
         yield return StartCoroutine(SelectedShuffleAnimation());
 
-        yield return StartCoroutine(FadeToBlack());
-
-        SceneManager.LoadScene(nextScene);
+        SceneTransitionFader.LoadScene(nextScene);
     }
 
     IEnumerator SelectedShuffleAnimation()
